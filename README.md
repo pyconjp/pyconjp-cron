@@ -28,3 +28,22 @@ $ . env/bin/activate
 6. OAuth クライアント IDがダイアログで表示されるので「OK」をクリックして閉じる
 7. 右端のダウンロードボタンをクリックして、 `client_secret_XXXX.json` をダウンロードする
 8. ファイル名を `client_secret.json` に変更して clone したディレクトリに置く
+
+### 2. credentials を生成
+
+- 下記の手順で `google_sheets.py` を実行すると、ブラウザが開いて API の許可を求める
+- 任意の Google アカウントで API を許可する
+- 成功すると `credentials.json` という証明書ファイルが生成される
+
+```
+$ . env/bin/activate
+(env) $ python google_sheets.py
+:
+credentialsをcredentials.jsonに保存しました
+Name, Major:
+Alexandra, English
+:
+Will, Math
+(env) $ ls credentials.json
+credentials.json
+```
