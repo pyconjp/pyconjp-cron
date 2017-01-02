@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 from dateutil import parser
 
 from google_sheets import get_service
 
 SHEET_ID = "1lpa9p_dCyTckREf09-oA2C6ZAMACCrgD9W3HQSKeoSI"
+# インターバルは5分
+INTERVAL = 5
+WEEK_STR = '日月火水木金土'
 
 
 def is_valid_period(start, end):
@@ -34,6 +37,29 @@ def is_valid_period(start, end):
     return start <= today <= end
 
 
+def is_target_date(now, date_str, time_str):
+    """
+    date, timeが指定範囲の場合に True を返す
+
+    :param now: 現在時刻(datetime)
+    :param date: 通知日(YYYY/MM/DD または曜日指定)
+    :param time: 通知時刻
+    """
+    target_time = parser.parse(time_str)
+    now_plus_interval = now + timedelta(minutes=INTERVAL)
+    # 時間が範囲外なら False を返す
+    if not now <= target_time < now_plus_interval:
+        return False
+    try:
+        # 日付指定の場合は日付が同じかどうかをチェック
+        target_date = parser.parse(date_str).date()
+        return target_date == now.date()
+    except ValueError:
+        # 曜日を取得
+        week_str = WEEK_STR[now.weekday()]
+        return week_str in date_str
+
+
 def sns_notify(row, now):
     """
     スプレッドシートのデータ1行分をSNSに通知する。
@@ -59,6 +85,8 @@ def sns_notify(row, now):
     if not is_valid_period(row[4], row[5]):
         return
     # 通知対象日時じゃなかったらなにもしない
+    if not is_target_date(now, row[0], row[1]):
+        return
     # メッセージ送信する
     if row[6] == '1':
         pass
@@ -70,11 +98,15 @@ def main():
     """
     PyCon JP Twitter/Facebook通知シートからデータを読み込んで通知する
     """
+    # 現在時刻(分まで)を取得
     now = datetime.now()
+    now = datetime(now.year, now.month, now.day, now.hour, now.minute)
+
     service = get_service()
     # シートから全データを読み込む
     result = service.spreadsheets().values().get(
         spreadsheetId=SHEET_ID, range='messages!A4:H').execute()
+    print(now)
     for row in result.get('values', []):
         # 1行のデータを元にSNSへの通知を実行
         sns_notify(row, now)
