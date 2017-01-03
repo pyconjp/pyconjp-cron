@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 
 from dateutil import parser
 import tweepy
+import facebook
 
 from google_sheets import get_service
 import settings
@@ -87,7 +88,14 @@ def facebook_notify(message, link):
     :param message: 送信するメッセージ
     :param link: 送信するURL
     """
-    pass
+    access_token = settings.FB_PAGE_ACCESS_TOKEN
+    graph = facebook.GraphAPI(access_token=access_token, version='2.2')
+    attachement = None
+    if link != '':
+        attachement = {
+            'link': link,
+        }
+    graph.put_wall_post(message, attachement)
 
 
 def sns_notify(row, now):
