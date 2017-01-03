@@ -7,10 +7,10 @@ $ git clone git@github.com:pyconjp/pyconjp-cron.git
 $ cd pyconjp-cron
 $ python3.5 -m venv env
 $ . env/bin/activate
-(env) $ pip install requirements.txt
+(env) $ pip install -r requirements.txt
 (env) $ python google_sheets.py # Google 認証を実行
-(env) $ cp confing.py.sample config.py
-(env) $ vi config.py
+(env) $ cp settings.py.sample settings.py
+(env) $ vi settings.py
 ```
 
 ## Google への認証を準備する
