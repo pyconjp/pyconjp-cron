@@ -8,6 +8,9 @@ $ cd pyconjp-cron
 $ python3.5 -m venv env
 $ . env/bin/activate
 (env) $ pip install requirements.txt
+(env) $ python google_sheets.py # Google 認証を実行
+(env) $ cp confing.py.sample config.py
+(env) $ vi config.py
 ```
 
 ## Google への認証を準備する
@@ -47,3 +50,21 @@ Will, Math
 (env) $ ls credentials.json
 credentials.json
 ```
+
+## Twitter との認証情報を用意する
+
+1. [Twitter Application Management](https://apps.twitter.com/ "Twitter Application Management") にPyCon JPのTwitterアカウント(@PyConJ)でログインする
+2. 以下のような情報を入力してアプリケーションを作成する
+
+  * Name: sns_notify
+  * Description :SNS Notify script for PyCon JP
+  * Website: https://github.com/pyconjp/pyconjp-cron
+  * Callback URL: 空
+
+3. `Key and Access Tokens` を選択→ `Create my access token` ボタンをクリック
+4. 以下の4項目の値を `settings.py` に記入する
+
+  * Consumer Key (API Key)
+  * Consumer Secret (API Secre)
+  * Access Token
+  * Access Token Secret

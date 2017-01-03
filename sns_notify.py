@@ -3,8 +3,10 @@
 from datetime import datetime, date, timedelta
 
 from dateutil import parser
+import tweepy
 
 from google_sheets import get_service
+import settings
 
 SHEET_ID = "1lpa9p_dCyTckREf09-oA2C6ZAMACCrgD9W3HQSKeoSI"
 # インターバルは5分
@@ -60,6 +62,34 @@ def is_target_date(now, date_str, time_str):
         return week_str in date_str
 
 
+def twitter_notify(message, link):
+    """
+    指定されたメッセージを Twitter に通知する
+
+    :param message: 送信するメッセージ
+    :param link: 送信するURL
+    """
+    # Twitter に OAuth 認証する
+    auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
+    auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
+    api = tweepy.API(auth)
+    # リンクがある場合は後ろにつける
+    if link != '':
+        message += ' ' + link
+    # ハッシュタグを付けてメッセージを送信
+    api.update_status('{} #pyconjp'.format(message))
+
+
+def facebook_notify(message, link):
+    """
+    指定されたメッセージを Facebook に通知する
+
+    :param message: 送信するメッセージ
+    :param link: 送信するURL
+    """
+    pass
+
+
 def sns_notify(row, now):
     """
     スプレッドシートのデータ1行分をSNSに通知する。
@@ -89,9 +119,9 @@ def sns_notify(row, now):
         return
     # メッセージ送信する
     if row[6] == '1':
-        pass
+        twitter_notify(row[2], row[3])
     if row[7] == '1':
-        pass
+        facebook_notify(row[2], row[3])
 
 
 def main():
@@ -106,7 +136,6 @@ def main():
     # シートから全データを読み込む
     result = service.spreadsheets().values().get(
         spreadsheetId=SHEET_ID, range='messages!A4:H').execute()
-    print(now)
     for row in result.get('values', []):
         # 1行のデータを元にSNSへの通知を実行
         sns_notify(row, now)
