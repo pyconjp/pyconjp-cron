@@ -68,3 +68,17 @@ credentials.json
   * Consumer Secret (API Secre)
   * Access Token
   * Access Token Secret
+
+## Facebook のアクセストークンの取得
+
+1. [開発者向けFacebook](https://developers.facebook.com/ "開発者向けFacebook") にアクセスしする
+2. `マイアプリ` → `新しいアプリを追加` を選択し、アプリケーションを登録する
+
+  * 表示名: pyconjp_sns_notify
+  * 連絡先メールアドレス: takanori@pycon.jp
+  * カテゴリ: コミュニケーション
+
+3. 作成したアプリケーションのダッシュボードが開くので `プラットフォームを選択` ボタンをクリックし `ウェブサイト` を選択する。Site URLには `http://localhost/` を指定する
+4. app id と app sercret を `settings.py` に記述する
+5. `get_fb_access_token.py` を実行し、手順に従ってアクセストークンを取得する
+7. 成功するとアクセストークンが出力されるので、その内容を `settings.py` に書き込む
