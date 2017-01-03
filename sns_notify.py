@@ -1,6 +1,10 @@
 #!/usr/bin/env python
+"""
+スプレッドシートに記入している内容からSNS(Twitter, Facebook)に通知するスクリプト
+"""
 
 from datetime import datetime, date, timedelta
+import logging
 
 from dateutil import parser
 import tweepy
@@ -9,10 +13,17 @@ import facebook
 from google_sheets import get_service
 import settings
 
+# スプレッドシートのID
 SHEET_ID = "1lpa9p_dCyTckREf09-oA2C6ZAMACCrgD9W3HQSKeoSI"
 # インターバルは5分
 INTERVAL = 5
+# 曜日の文字列
 WEEK_STR = '日月火水木金土'
+
+# ログをファイルに出力する
+fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=fmt, filename='sns_notify.log', level=logging.INFO)
+logger = logging.getLogger('sns_notify')
 
 
 def is_valid_period(start, end):
@@ -70,6 +81,7 @@ def twitter_notify(message, link):
     :param message: 送信するメッセージ
     :param link: 送信するURL
     """
+    logger.info('twitter notify: %s', message)
     # Twitter に OAuth 認証する
     auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
     auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
@@ -88,6 +100,7 @@ def facebook_notify(message, link):
     :param message: 送信するメッセージ
     :param link: 送信するURL
     """
+    logger.info('facebook notify: %s', message)
     access_token = settings.FB_PAGE_ACCESS_TOKEN
     graph = facebook.GraphAPI(access_token=access_token, version='2.2')
     attachement = None
@@ -125,7 +138,7 @@ def sns_notify(row, now):
     # 通知対象日時じゃなかったらなにもしない
     if not is_target_date(now, row[0], row[1]):
         return
-    # メッセージ送信する
+    # メッセージを送信する
     if row[6] == '1':
         twitter_notify(row[2], row[3])
     if row[7] == '1':
@@ -136,9 +149,11 @@ def main():
     """
     PyCon JP Twitter/Facebook通知シートからデータを読み込んで通知する
     """
+    logger.info('Start sns_notify')
     # 現在時刻(分まで)を取得
     now = datetime.now()
     now = datetime(now.year, now.month, now.day, now.hour, now.minute)
+    logger.info('now: %s', now)
 
     service = get_service()
     # シートから全データを読み込む
@@ -147,6 +162,7 @@ def main():
     for row in result.get('values', []):
         # 1行のデータを元にSNSへの通知を実行
         sns_notify(row, now)
+    logger.info('End sns_notify')
 
 
 if __name__ == '__main__':
