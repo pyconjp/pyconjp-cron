@@ -18,7 +18,7 @@ SHEET_ID = "1lpa9p_dCyTckREf09-oA2C6ZAMACCrgD9W3HQSKeoSI"
 # インターバルは5分
 INTERVAL = 5
 # 曜日の文字列
-WEEK_STR = '日月火水木金土'
+WEEK_STR = '月火水木金土日'
 
 # ログをファイルに出力する
 fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
