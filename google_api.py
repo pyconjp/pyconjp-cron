@@ -10,22 +10,36 @@ SCOPES = [
     # Google Sheets API
     # https://developers.google.com/sheets/api/guides/authorizing
     'https://www.googleapis.com/auth/spreadsheets.readonly',
-    ]
-DISCOVERY_URL = 'https://sheets.googleapis.com/$discovery/rest?version=v4'
+    # Google Calendar
+    # https://developers.google.com/google-apps/calendar/auth
+    'https://www.googleapis.com/auth/calendar',
+]
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'pyconjp-cron'
 CREDENTIAL_FILE = 'credentials.json'
 
 
-def get_service():
+def get_sheets_service():
     """
     Google Sheets API のサービスを取得する
     """
+    return get_service('sheets', 'v4')
 
+
+def get_calendar_service():
+    """
+    Google Calendar API のサービスを取得する
+    """
+    return get_service('calendar', 'v3')
+
+
+def get_service(name, version):
+    """
+    指定された名前とバージョンのサービスを取得する
+    """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
-    service = discovery.build('sheets', 'v4', http=http,
-                              discoveryServiceUrl=DISCOVERY_URL)
+    service = discovery.build(name, version, http=http)
     return service
 
 
@@ -48,7 +62,7 @@ def get_credentials():
 
 
 def main():
-    service = get_service()
+    service = get_sheets_service()
     spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
     rangeName = 'Class Data!A2:E'
     result = service.spreadsheets().values().get(
