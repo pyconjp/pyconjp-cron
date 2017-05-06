@@ -12,6 +12,8 @@ PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoo
 '''
 
 from datetime import datetime
+import logging
+import os
 
 import requests
 from dateutil import parser
@@ -25,6 +27,14 @@ NG_WORDS = ('懇親会', 'spicy-food部', 'Meat')
 
 # カレンダーID
 CAL_ID = 'bsn2855fnbngs1itml66l28ml8@group.calendar.google.com'
+
+
+# ログをファイルに出力する
+BASENAME = os.path.basename(__file__).replace('.py', '')
+fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+filename = BASENAME + '.log' 
+logging.basicConfig(format=fmt, filename=filename, level=logging.INFO)
+logger = logging.getLogger(BASENAME)
 
 
 def is_ok_title(title):
@@ -110,7 +120,6 @@ def register_event_to_calendar(event):
     '''
     # カレンダーAPIを使用するためにサービスを取得
     calendar = get_calendar_service()
-    print(event['title'])
 
     # 同一connpassイベントがカレンダーに登録済か調べる
     event_id = get_calendar_event_id(calendar, event['event_url'])
@@ -120,16 +129,19 @@ def register_event_to_calendar(event):
 
     if event_id:
         # Googleカレンダーのイベントを更新する
-        r = calendar.events().update(calendarId=CAL_ID, eventId=event_id, body=body).execute()
+        calendar.events().update(calendarId=CAL_ID, eventId=event_id, body=body).execute()
+        logger.info('Update calendar event: %s', event['title'])
     else:
         # Googleカレンダーにイベントを追加する
-        r = calendar.events().insert(calendarId=CAL_ID, body=body).execute()
+        calendar.events().insert(calendarId=CAL_ID, body=body).execute()
+        logger.info('Insert calendar event: %s', event['title'])
 
-    
+
 def main():
     # 現在日時を取得
     jst_now = datetime.now().astimezone(timezone('Asia/Tokyo'))
     for series_id in 137, 1671:
+        logger.debug('Get event info from connpass: %d', series_id)
         # connpass の API を実行する
         params = {
             'series_id': series_id
@@ -155,5 +167,6 @@ def main():
 
 
 if __name__ == '__main__':
+    logger.info('Start script')
     main()
-
+    logger.info('End script')
