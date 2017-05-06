@@ -5,7 +5,7 @@
 ```sh
 $ git clone git@github.com:pyconjp/pyconjp-cron.git
 $ cd pyconjp-cron
-$ python3.5 -m venv env
+$ python3.6 -m venv env
 $ . env/bin/activate
 (env) $ pip install -r requirements.txt
 (env) # 「1. Google API を有効にする」の手順を実施
@@ -13,6 +13,9 @@ $ . env/bin/activate
 (env) $ cp settings.py.sample settings.py
 (env) $ vi settings.py
 ```
+
+* sns_notify.py: Twitter通知シート(スプレッドシート)の内容をTwitter/Facebookに通知する
+* update_calendar.py: connpass イベントを PyCon JP の Google カレンダーに登録する
 
 ## Google への認証を準備する
 
