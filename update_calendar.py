@@ -5,10 +5,9 @@ PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoo
 
 * https://pyconjp.connpass.com/ connpassグループID 137
 * https://pyconjp-staff.connpass.com/ connpassグループID 1671
+* connpass API: https://connpass.com/about/api/
 
 * PyCon JP カレンダーID: bsn2855fnbngs1itml66l28ml8@group.calendar.google.com
-
-* connpass API: https://connpass.com/about/api/
 '''
 
 from datetime import datetime
@@ -27,7 +26,6 @@ NG_WORDS = ('懇親会', 'spicy-food部', 'Meat')
 
 # カレンダーID
 CAL_ID = 'bsn2855fnbngs1itml66l28ml8@group.calendar.google.com'
-
 
 # ログをファイルに出力する
 BASENAME = os.path.basename(__file__).replace('.py', '')
@@ -152,7 +150,7 @@ def main():
             # 1日以内に更新されていなければ対象外
             updated_at = parser.parse(event['updated_at'])
             delta = jst_now - updated_at
-            if delta.days > 100:
+            if delta.days > 0:
                 continue
 
             # 開始日時が設定されていなければ対象外
