@@ -10,7 +10,7 @@ from dateutil import parser
 import tweepy
 import facebook
 
-from google_sheets import get_service
+from google_api import get_sheets_service
 import settings
 
 # スプレッドシートのID
@@ -155,7 +155,7 @@ def main():
     now = datetime(now.year, now.month, now.day, now.hour, now.minute)
     logger.info('now: %s', now)
 
-    service = get_service()
+    service = get_sheets_service()
     # シートから全データを読み込む
     result = service.spreadsheets().values().get(
         spreadsheetId=SHEET_ID, range='messages!A4:H').execute()

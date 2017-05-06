@@ -5,13 +5,17 @@
 ```sh
 $ git clone git@github.com:pyconjp/pyconjp-cron.git
 $ cd pyconjp-cron
-$ python3.5 -m venv env
+$ python3.6 -m venv env
 $ . env/bin/activate
 (env) $ pip install -r requirements.txt
-(env) $ python google_sheets.py # Google 認証を実行
+(env) # 「1. Google API を有効にする」の手順を実施
+(env) $ python google_api.py # Google 認証を実行
 (env) $ cp settings.py.sample settings.py
 (env) $ vi settings.py
 ```
+
+* sns_notify.py: Twitter通知シート(スプレッドシート)の内容をTwitter/Facebookに通知する
+* update_calendar.py: connpass イベントを PyCon JP の Google カレンダーに登録する
 
 ## Google への認証を準備する
 
@@ -21,7 +25,10 @@ $ . env/bin/activate
 
 1. [Google API Console](https://console.developers.google.com/apis/api) を開く
 2. 「プロジェクトを作成」→ `pyconjp-cron` などを指定して「作成」
-3. 「APIを有効にする」を選択し、 `Google Seets API` を検索して有効にする
+3. 「APIを有効にする」を選択し、以下のAPIを検索して有効にする
+
+   * Google Seets API: スプレッドシートの読み書きに必要
+   * Google Calendar API: カレンダーの読み書きに必要
 4. 「認証情報」メニュー→「OAuth同意画面」タブ→以下を入力して「保存」
 
     メールアドレス: 自分のメールアドレス
@@ -34,13 +41,13 @@ $ . env/bin/activate
 
 ### 2. credentials を生成
 
-- 下記の手順で `google_sheets.py` を実行すると、ブラウザが開いて API の許可を求める
+- 下記の手順で `google_api.py` を実行すると、ブラウザが開いて API の許可を求める
 - 任意の Google アカウントで API を許可する
 - 成功すると `credentials.json` という証明書ファイルが生成される
 
 ```
 $ . env/bin/activate
-(env) $ python google_sheets.py
+(env) $ python google_api.py
 :
 credentialsをcredentials.jsonに保存しました
 Name, Major:
