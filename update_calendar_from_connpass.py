@@ -1,5 +1,5 @@
 #!/usr/bin/python
-"""
+'''
 PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoogleカレンダー
 に登録する
 
@@ -9,7 +9,7 @@ PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoo
 * PyCon JP カレンダーID: bsn2855fnbngs1itml66l28ml8@group.calendar.google.com
 
 * connpass API: https://connpass.com/about/api/
-"""
+'''
 
 from datetime import datetime
 
@@ -17,40 +17,110 @@ import requests
 from dateutil import parser
 from pytz import timezone
 
+from google_api import get_calendar_service
+
 
 # 以下のタイトルを含むイベントは登録対象から外す
 NG_WORDS = ('懇親会', 'spicy-food部', 'Meat')
 
+# カレンダーID
+CAL_ID = 'bsn2855fnbngs1itml66l28ml8@group.calendar.google.com'
+
 
 def is_ok_title(title):
-    """
+    '''
     タイトルにNGワードを含んでいないかを確認する
 
     :param str title: イベントのタイトル
     :return: True: 含んでいない(OK)、False: 含んでいる(NG)
-    """
+    '''
     for word in NG_WORDS:
         if word in title:
             return False
     return True
 
 
-def register_event_to_calendar(event):
-    """
-    イベント情報を PyCon JP カレンダーに登録する
+def get_calendar_event_id(calendar, event_url):
+    '''
+    指定された URL のイベントがカレンダーに登録済か調べる
 
-    :param dict event: イベント情報
-    """
-    event_id = event['event_id'] # イベントID
-    title = event['title'] # タイトル
-    description = event['description'] # 概要
-    event_url = event['event_url'] # connpass.com上のURL
-    started_at = parser.parse(event['started_at']) # 開催日時
-    ended_at = parser.parse(event['ended_at']) # 終了日時
-    address = event['address'] # 開催場所
-    place = event['place'] # 開催会場
+    :param calendar: カレンダーAPIに接続するためのサービス
+    :param str event_url: connpassイベントのURL
+    :return: GoogleカレンダーのイベントID(存在しない場合はNone)
+    '''
+    event_id = None
+    events = calendar.events().list(calendarId=CAL_ID, q=event_url).execute()
+    if events['items']:
+        event = events['items'][0]
+        event_id = event['id']
+
+    return event_id
+
+
+def create_calendar_event_body(event):
+    '''
+    connpassのevent情報をもとに、Google Calendarのイベント情報を生成する
+    https://developers.google.com/google-apps/calendar/v3/reference/events/insert
+    https://developers.google.com/google-apps/calendar/v3/reference/events/update
+
+    event 情報(dict)の詳細
+
+    * event_id: イベントID
+    * title: タイトル
+    * description: 概要
+    * event_url: connpass.com上のURL
+    * started_at: 開催日時(文字列)
+    * ended_at: 終了日時(文字列)
+    * address: 開催場所
+    * place: 開催会場
+
+    :param dict event: connpassのイベント情報
+    :return: Google Calendarのイベント情報
+    '''
     # TODO: description をテキストにしたい
     # https://pypi.python.org/pypi/html2text/2016.9.19
+
+    body = {
+        'summary': event['title'],
+        'description': event['event_url'],
+        'start': {
+            'dateTime': event['started_at'],
+            'timeZone': 'Asia/Tokyo',
+        },
+        'end': {
+            'dateTime': event['ended_at'],
+            'timeZone': 'Asia/Tokyo',
+        },
+        'location': '{address}({place})'.format(**event),
+    }
+
+    return body
+    
+def register_event_to_calendar(event):
+    '''
+    イベント情報を PyCon JP カレンダーに登録する
+
+    :param dict event: connpassのイベント情報
+    '''
+    import pdb
+    pdb.set_trace()
+    # カレンダーAPIを使用するためにサービスを取得
+    calendar = get_calendar_service()
+    print(event['title'])
+    print(event.keys())
+
+    # 同一connpassイベントがカレンダーに登録済か調べる
+    event_id = get_calendar_event_id(calendar, event['event_url'])
+
+    # カレンダーに登録するためのイベント情報を作成する
+    body = create_calendar_event_body(event)
+
+    if event_id:
+        # 更新する
+        pass
+    else:
+        # 追加する
+        pass
 
     
 def main():
@@ -67,7 +137,7 @@ def main():
             # 1日以内に更新されていなければ対象外
             updated_at = parser.parse(event['updated_at'])
             delta = jst_now - updated_at
-            if delta.days > 0:
+            if delta.days > 100:
                 continue
 
             # 開始日時が設定されていなければ対象外
