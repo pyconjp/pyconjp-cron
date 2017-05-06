@@ -1,7 +1,7 @@
 facebook-sdk==2.0.0
 google-api-python-client==1.6.2
 httplib2==0.10.3
-oauth2client==4.0.0
+oauth2client==3.0.0
 oauthlib==2.0.2
 pyasn1==0.2.3
 pyasn1-modules==0.0.8
