@@ -60,6 +60,7 @@ def get_calendar_event_id(calendar, event_url):
 def create_calendar_event_body(event):
     '''
     connpassのevent情報をもとに、Google Calendarのイベント情報を生成する
+
     https://developers.google.com/google-apps/calendar/v3/reference/events/insert
     https://developers.google.com/google-apps/calendar/v3/reference/events/update
 
@@ -91,14 +92,18 @@ def create_calendar_event_body(event):
             'dateTime': event['ended_at'],
             'timeZone': 'Asia/Tokyo',
         },
-        'location': '{address}({place})'.format(**event),
     }
+    # 場所が設定されていたら登録する
+    if event['address']:
+        body['location'] = '{address}({place})'.format(**event)
 
     return body
     
 def register_event_to_calendar(event):
     '''
     イベント情報を PyCon JP カレンダーに登録する
+
+    https://developers.google.com/resources/api-libraries/documentation/calendar/v3/python/latest/calendar_v3.events.html
 
     :param dict event: connpassのイベント情報
     '''
@@ -107,7 +112,6 @@ def register_event_to_calendar(event):
     # カレンダーAPIを使用するためにサービスを取得
     calendar = get_calendar_service()
     print(event['title'])
-    print(event.keys())
 
     # 同一connpassイベントがカレンダーに登録済か調べる
     event_id = get_calendar_event_id(calendar, event['event_url'])
@@ -116,11 +120,11 @@ def register_event_to_calendar(event):
     body = create_calendar_event_body(event)
 
     if event_id:
-        # 更新する
-        pass
+        # Googleカレンダーのイベントを更新する
+        r = calendar.events().update(calendarId=CAL_ID, eventId=event_id, body=body).execute()
     else:
-        # 追加する
-        pass
+        # Googleカレンダーにイベントを追加する
+        r = calendar.events().insert(calendarId=CAL_ID, body=body).execute()
 
     
 def main():
