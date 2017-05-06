@@ -83,7 +83,7 @@ def create_calendar_event_body(event):
 
     body = {
         'summary': event['title'],
-        'description': event['event_url'],
+        'description': '<a href="{0}">{0}</a>'.format(event['event_url']),
         'start': {
             'dateTime': event['started_at'],
             'timeZone': 'Asia/Tokyo',
@@ -98,7 +98,8 @@ def create_calendar_event_body(event):
         body['location'] = '{address}({place})'.format(**event)
 
     return body
-    
+
+
 def register_event_to_calendar(event):
     '''
     イベント情報を PyCon JP カレンダーに登録する
@@ -107,8 +108,6 @@ def register_event_to_calendar(event):
 
     :param dict event: connpassのイベント情報
     '''
-    import pdb
-    pdb.set_trace()
     # カレンダーAPIを使用するためにサービスを取得
     calendar = get_calendar_service()
     print(event['title'])
