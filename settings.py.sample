@@ -10,3 +10,7 @@ APP_SECRET = 'xxxxxxxxxxxxxxxxxxxxx'
 PAGE_ID = 'xxxxxxxxxxxxxxxxxxxxx'
 FB_ACCESS_TOKEN = 'xxxxxxxxxxxxxxxxxxxxx'
 FB_PAGE_ACCESS_TOKEN = 'xxxxxxxxxxxxxxxxxxxxx'
+
+# Slack API token
+# https://api.slack.com/custom-integrations/legacy-tokens
+SLACK_TOKEN = 'xoxp-xxxxxxxxxxxxxxx'

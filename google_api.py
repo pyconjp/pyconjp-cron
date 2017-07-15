@@ -9,7 +9,7 @@ from oauth2client.file import Storage
 SCOPES = [
     # Google Sheets API
     # https://developers.google.com/sheets/api/guides/authorizing
-    'https://www.googleapis.com/auth/spreadsheets.readonly',
+    'https://www.googleapis.com/auth/spreadsheets',
     # Google Calendar
     # https://developers.google.com/google-apps/calendar/auth
     'https://www.googleapis.com/auth/calendar',
