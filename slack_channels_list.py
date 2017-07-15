@@ -60,7 +60,6 @@ def store(channels):
     service = get_sheets_service()
     result = service.spreadsheets().values().batchUpdate(
         spreadsheetId=SHEET_ID, body=body).execute()
-    print(result)
 
 
 def main():
