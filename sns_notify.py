@@ -102,7 +102,7 @@ def facebook_notify(message, link):
     """
     logger.info('facebook notify: %s', message)
     access_token = settings.FB_PAGE_ACCESS_TOKEN
-    graph = facebook.GraphAPI(access_token=access_token, version='2.9')
+    graph = facebook.GraphAPI(access_token=access_token, version='3.1')
     params = {
         'message': message
     }
