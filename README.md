@@ -88,4 +88,4 @@ credentials.json
 3. 作成したアプリケーションのダッシュボードが開くので `プラットフォームを選択` ボタンをクリックし `ウェブサイト` を選択する。Site URLには `http://localhost/` を指定する
 4. app id と app sercret を `settings.py` に記述する
 5. `get_fb_access_token.py` を実行し、手順に従ってアクセストークンを取得する
-7. 成功するとアクセストークンが出力されるので、その内容を `settings.py` に書き込む
+6. 成功するとページアクセストークンが出力されるので、その内容を `settings.py` に書き込む
