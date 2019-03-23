@@ -102,13 +102,13 @@ def facebook_notify(message, link):
     """
     logger.info('facebook notify: %s', message)
     access_token = settings.FB_PAGE_ACCESS_TOKEN
-    graph = facebook.GraphAPI(access_token=access_token, version='2.2')
-    attachement = None
-    if link != '':
-        attachement = {
-            'link': link,
-        }
-    graph.put_wall_post(message, attachement)
+    graph = facebook.GraphAPI(access_token=access_token, version='2.9')
+    params = {
+        'message': message
+    }
+    if link:
+        params['link'] = link
+    graph.put_object(settings.PAGE_ID, 'feed', **params)
 
 
 def sns_notify(row, now):
