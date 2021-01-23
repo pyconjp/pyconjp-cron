@@ -5,9 +5,8 @@ Slackのチャンネル一覧を生成する
 
 from slacker import Slacker
 
-from google_api import get_sheets_service
 import settings
-
+from google_api import get_sheets_service
 
 # チャンネル一覧を書き込むスプレッドシートのID
 SHEET_ID = '1Z93vxxC6zdSunO52-9hQpeGpBqQeFPIPLn2ayPRmtJY'

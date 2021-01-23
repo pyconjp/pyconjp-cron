@@ -10,16 +10,15 @@ PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoo
 * PyCon JP カレンダーID: bsn2855fnbngs1itml66l28ml8@group.calendar.google.com
 '''
 
-from datetime import datetime
 import logging
 import os
+from datetime import datetime
 
 import requests
 from dateutil import parser
 from pytz import timezone
 
 from google_api import get_calendar_service
-
 
 # 以下のタイトルを含むイベントは登録対象から外す
 NG_WORDS = ('懇親会', 'spicy-food部', 'Meat')
