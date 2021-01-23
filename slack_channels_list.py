@@ -63,6 +63,7 @@ def store(channels):
         .batchUpdate(spreadsheetId=SHEET_ID, body=body)
         .execute()
     )
+    return result
 
 
 def main():
