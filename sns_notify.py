@@ -3,27 +3,27 @@
 スプレッドシートに記入している内容からSNS(Twitter, Facebook)に通知するスクリプト
 """
 
-from datetime import datetime, date, timedelta
 import logging
+from datetime import date, datetime, timedelta
 
-from dateutil import parser
-import tweepy
 import facebook
+import tweepy
+from dateutil import parser
 
-from google_api import get_sheets_service
 import settings
+from google_api import get_sheets_service
 
 # スプレッドシートのID
 SHEET_ID = "1lpa9p_dCyTckREf09-oA2C6ZAMACCrgD9W3HQSKeoSI"
 # インターバルは5分
 INTERVAL = 5
 # 曜日の文字列
-WEEK_STR = '月火水木金土日'
+WEEK_STR = "月火水木金土日"
 
 # ログをファイルに出力する
-fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-logging.basicConfig(format=fmt, filename='sns_notify.log', level=logging.INFO)
-logger = logging.getLogger('sns_notify')
+fmt = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+logging.basicConfig(format=fmt, filename="sns_notify.log", level=logging.INFO)
+logger = logging.getLogger("sns_notify")
 
 
 def is_valid_period(start, end):
@@ -81,16 +81,16 @@ def twitter_notify(message, link):
     :param message: 送信するメッセージ
     :param link: 送信するURL
     """
-    logger.info('twitter notify: %s', message)
+    logger.info("twitter notify: %s", message)
     # Twitter に OAuth 認証する
     auth = tweepy.OAuthHandler(settings.CONSUMER_KEY, settings.CONSUMER_SECRET)
     auth.set_access_token(settings.ACCESS_TOKEN, settings.ACCESS_TOKEN_SECRET)
     api = tweepy.API(auth)
     # リンクがある場合は後ろにつける
-    if link != '':
-        message += ' ' + link
+    if link != "":
+        message += " " + link
     # ハッシュタグを付けてメッセージを送信
-    api.update_status('{} #pyconjp'.format(message))
+    api.update_status("{} #pyconjp".format(message))
 
 
 def facebook_notify(message, link):
@@ -100,15 +100,13 @@ def facebook_notify(message, link):
     :param message: 送信するメッセージ
     :param link: 送信するURL
     """
-    logger.info('facebook notify: %s', message)
+    logger.info("facebook notify: %s", message)
     access_token = settings.FB_PAGE_ACCESS_TOKEN
-    graph = facebook.GraphAPI(access_token=access_token, version='3.1')
-    params = {
-        'message': message
-    }
+    graph = facebook.GraphAPI(access_token=access_token, version="3.1")
+    params = {"message": message}
     if link:
-        params['link'] = link
-    graph.put_object(settings.PAGE_ID, 'feed', **params)
+        params["link"] = link
+    graph.put_object(settings.PAGE_ID, "feed", **params)
 
 
 def sns_notify(row, now):
@@ -139,9 +137,9 @@ def sns_notify(row, now):
     if not is_target_date(now, row[0], row[1]):
         return
     # メッセージを送信する
-    if row[6] == '1':
+    if row[6] == "1":
         twitter_notify(row[2], row[3])
-    if row[7] == '1':
+    if row[7] == "1":
         facebook_notify(row[2], row[3])
 
 
@@ -149,21 +147,25 @@ def main():
     """
     PyCon JP Twitter/Facebook通知シートからデータを読み込んで通知する
     """
-    logger.info('Start sns_notify')
+    logger.info("Start sns_notify")
     # 現在時刻(分まで)を取得
     now = datetime.now()
     now = datetime(now.year, now.month, now.day, now.hour, now.minute)
-    logger.info('now: %s', now)
+    logger.info("now: %s", now)
 
     service = get_sheets_service()
     # シートから全データを読み込む
-    result = service.spreadsheets().values().get(
-        spreadsheetId=SHEET_ID, range='messages!A4:H').execute()
-    for row in result.get('values', []):
+    result = (
+        service.spreadsheets()
+        .values()
+        .get(spreadsheetId=SHEET_ID, range="messages!A4:H")
+        .execute()
+    )
+    for row in result.get("values", []):
         # 1行のデータを元にSNSへの通知を実行
         sns_notify(row, now)
-    logger.info('End sns_notify')
+    logger.info("End sns_notify")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
