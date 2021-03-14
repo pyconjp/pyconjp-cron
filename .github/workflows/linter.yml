@@ -17,6 +17,9 @@ jobs:
         use-black: false
         use-mypy: false
         use-isort: true
-        # extra-flake8-options: ""
+        extra-flake8-options: "--max-line-length 88""
         # extra-black-options: ""
         # extra-isort-options: ""
+    # https://black.readthedocs.io/en/stable/github_actions.html
+    - uses: actions/setup-python@v2
+    - uses: psf/black@stable
