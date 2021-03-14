@@ -3,6 +3,8 @@
 Slackのチャンネル一覧を生成する
 """
 
+from __future__ import annotations
+
 from slacker import Slacker
 
 import settings
@@ -12,7 +14,7 @@ from google_api import get_sheets_service
 SHEET_ID = "1Z93vxxC6zdSunO52-9hQpeGpBqQeFPIPLn2ayPRmtJY"
 
 
-def get_channels_list():
+def get_channels_list() -> list[dict[str, str | int]]:
     """
     Slackのチャンネル一覧から必要な情報を返す
 
@@ -33,7 +35,7 @@ def get_channels_list():
     return channels
 
 
-def store(channels):
+def store(channels: list[dict[str, str | int]]):
     """
     Slackのチャンネル情報をGoogleスプレッドシートに書き込む
 
@@ -66,7 +68,7 @@ def store(channels):
     return result
 
 
-def main():
+def main() -> None:
     """
     Slackのチャンネル一覧情報を取得する
     """

@@ -10,6 +10,8 @@ PyCon JP、PyCon JP スタッフのconnpassイベント情報を PyCon JP のGoo
 * PyCon JP カレンダーID: bsn2855fnbngs1itml66l28ml8@group.calendar.google.com
 """
 
+from __future__ import annotations
+
 import logging
 import os
 from datetime import datetime
@@ -34,7 +36,7 @@ logging.basicConfig(format=fmt, filename=filename, level=logging.INFO)
 logger = logging.getLogger(BASENAME)
 
 
-def is_ok_title(title):
+def is_ok_title(title: str) -> bool:
     """
     タイトルにNGワードを含んでいないかを確認する
 
@@ -47,7 +49,7 @@ def is_ok_title(title):
     return True
 
 
-def get_calendar_event_id(calendar, event_url):
+def get_calendar_event_id(calendar, event_url: str) -> str | None:
     """
     指定された URL のイベントがカレンダーに登録済か調べる
 
@@ -64,7 +66,7 @@ def get_calendar_event_id(calendar, event_url):
     return event_id
 
 
-def create_calendar_event_body(event):
+def create_calendar_event_body(event: dict[str, str]):
     """
     connpassのevent情報をもとに、Google Calendarのイベント情報を生成する
 
@@ -107,7 +109,7 @@ def create_calendar_event_body(event):
     return body
 
 
-def register_event_to_calendar(event):
+def register_event_to_calendar(event: dict[str, str]) -> None:
     """
     イベント情報を PyCon JP カレンダーに登録する
 
@@ -136,7 +138,7 @@ def register_event_to_calendar(event):
         logger.info("Insert calendar event: %s", event["title"])
 
 
-def main():
+def main() -> None:
     # 現在日時を取得
     jst_now = datetime.now().astimezone(timezone("Asia/Tokyo"))
     for series_id in 137, 1671:
