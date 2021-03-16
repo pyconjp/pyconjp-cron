@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 import os
 from datetime import datetime
+from typing import Any
 
 import requests
 from dateutil import parser
@@ -66,9 +67,11 @@ def get_calendar_event_id(calendar, event_url: str) -> str | None:
     return event_id
 
 
-def create_calendar_event_body(event: dict[str, str]):
+def create_calendar_event_body(event: dict[str, str]) -> dict[str, Any]:
     """
     connpassのevent情報をもとに、Google Calendarのイベント情報を生成する
+
+    # TODO: annotaitonからAnyをはずしたい
 
     https://developers.google.com/google-apps/calendar/v3/reference/events/insert
     https://developers.google.com/google-apps/calendar/v3/reference/events/update

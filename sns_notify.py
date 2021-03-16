@@ -26,7 +26,7 @@ logging.basicConfig(format=fmt, filename="sns_notify.log", level=logging.INFO)
 logger = logging.getLogger("sns_notify")
 
 
-def is_valid_period(start, end):
+def is_valid_period(start: str, end: str) -> bool:
     """
     今日が start, end の範囲内かどうかを返す
 
@@ -38,20 +38,20 @@ def is_valid_period(start, end):
 
     # 文字列を date 型にする
     try:
-        start = parser.parse(start).date()
+        start_date = parser.parse(start).date()
     except ValueError:
-        start = date(2000, 1, 1)  # 過去の日付にする
+        start_date = date(2000, 1, 1)  # 過去の日付にする
     try:
-        end = parser.parse(end).date()
+        end_date = parser.parse(end).date()
     except ValueError:
-        end = date(3000, 1, 1)  # 未来の日付にする
+        end_date = date(3000, 1, 1)  # 未来の日付にする
     today = date.today()
 
     # 今日が範囲内かどうかを返す
-    return start <= today <= end
+    return start_date <= today <= end_date
 
 
-def is_target_date(now, date_str, time_str):
+def is_target_date(now: datetime, date_str: str, time_str: str) -> bool:
     """
     date, timeが指定範囲の場合に True を返す
 
@@ -74,7 +74,7 @@ def is_target_date(now, date_str, time_str):
         return week_str in date_str
 
 
-def twitter_notify(message, link):
+def twitter_notify(message: str, link: str) -> None:
     """
     指定されたメッセージを Twitter に通知する
 
@@ -93,7 +93,7 @@ def twitter_notify(message, link):
     api.update_status("{} #pyconjp".format(message))
 
 
-def facebook_notify(message, link):
+def facebook_notify(message: str, link: str) -> None:
     """
     指定されたメッセージを Facebook に通知する
 
@@ -109,7 +109,7 @@ def facebook_notify(message, link):
     graph.put_object(settings.PAGE_ID, "feed", **params)
 
 
-def sns_notify(row, now):
+def sns_notify(row: list, now: datetime) -> None:
     """
     スプレッドシートのデータ1行分をSNSに通知する。
     データは以下の形式。
@@ -143,7 +143,7 @@ def sns_notify(row, now):
         facebook_notify(row[2], row[3])
 
 
-def main():
+def main() -> None:
     """
     PyCon JP Twitter/Facebook通知シートからデータを読み込んで通知する
     """
