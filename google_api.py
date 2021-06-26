@@ -1,9 +1,9 @@
 import os.path
 
-import httplib2
-from apiclient import discovery
-from oauth2client import client, tools
-from oauth2client.file import Storage
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import Resource, build
 
 SCOPES = [
     # Google Sheets API
@@ -13,51 +13,65 @@ SCOPES = [
     # https://developers.google.com/google-apps/calendar/auth
     "https://www.googleapis.com/auth/calendar",
 ]
-CLIENT_SECRET_FILE = "client_secret.json"
+
 APPLICATION_NAME = "pyconjp-cron"
 CREDENTIAL_FILE = "credentials.json"
+TOKEN_FILE = "token.json"
 
 
-def get_sheets_service():
+def get_sheets_service() -> Resource:
     """
     Google Sheets API のサービスを取得する
     """
     return get_service("sheets", "v4")
 
 
-def get_calendar_service():
+def get_calendar_service() -> Resource:
     """
     Google Calendar API のサービスを取得する
     """
     return get_service("calendar", "v3")
 
 
-def get_service(name, version):
-    """
-    指定された名前とバージョンのサービスを取得する
+def get_service(name: str, version: str) -> Resource:
+    """指定された Google API に接続する
+    name: APIの名前
+    version: APIのバージョン
+    scope: OAuth のスコープを指定する
+    serviceオブジェクトを返す
     """
     credentials = get_credentials()
-    http = credentials.authorize(httplib2.Http())
-    service = discovery.build(name, version, http=http)
+    service = build(name, version, credentials=credentials)
     return service
 
 
 def get_credentials():
     """
-    credentialsファイルを生成する
+    credentials情報を作成して返す
     """
-    dirname = os.path.dirname(__file__)
-    credential_path = os.path.join(dirname, CREDENTIAL_FILE)
-    client_secret_file = os.path.join(dirname, CLIENT_SECRET_FILE)
 
-    store = Storage(credential_path)
-    credentials = store.get()
-    if not credentials or credentials.invalid:
-        flow = client.flow_from_clientsecrets(client_secret_file, SCOPES)
-        flow.user_agent = APPLICATION_NAME
-        credentials = tools.run_flow(flow, store)
-        print("credentialsを{}に保存しました".format(credential_path))
-    return credentials
+    creds = None
+
+    dirname = os.path.dirname(__file__)
+    credential_file = os.path.join(dirname, CREDENTIAL_FILE)
+    token_file = os.path.join(dirname, TOKEN_FILE)
+
+    # The file token.json stores the user's access and refresh tokens, and is
+    # created automatically when the authorization flow completes for the first
+    # time.
+    if os.path.exists(token_file):
+        creds = Credentials.from_authorized_user_file(token_file, SCOPES)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            flow = InstalledAppFlow.from_client_secrets_file(credential_file, SCOPES)
+            creds = flow.run_local_server(port=0)
+        # Save the credentials for the next run
+        with open(token_file, "w") as token:
+            token.write(creds.to_json())
+    return creds
 
 
 def main():
