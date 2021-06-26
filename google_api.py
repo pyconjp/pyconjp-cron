@@ -41,7 +41,7 @@ def get_service(name: str, version: str) -> Resource:
     serviceオブジェクトを返す
     """
     credentials = get_credentials()
-    service = build(name, version, credentials=credentials)
+    service = build(name, version, credentials=credentials, cache_discovery=False)
     return service
 
 
