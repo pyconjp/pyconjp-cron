@@ -148,7 +148,14 @@ def main() -> None:
         logger.debug("Get event info from connpass: %d", series_id)
         # connpass の API を実行する
         params = {"series_id": series_id}
-        r = requests.get("https://connpass.com/api/v1/event/", params=params)
+        headers = {
+            "User-Agent": "PyCon JP cron",
+            "From": "https://github.com/pyconjp/pyconjp-cron",
+        }
+
+        r = requests.get(
+            "https://connpass.com/api/v1/event/", params=params, headers=headers
+        )
         # イベント情報を取得
         for event in r.json().get("events"):
             # 1日以内に更新されていなければ対象外
