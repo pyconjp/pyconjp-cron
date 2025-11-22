@@ -39,6 +39,7 @@ logger = logging.getLogger(BASENAME)
 # connpassのグループID
 SUBDOMAINS = ["pyconjp", "pyconjp-staff"]
 
+
 def is_ok_title(title: str) -> bool:
     """
     タイトルにNGワードを含んでいないかを確認する
