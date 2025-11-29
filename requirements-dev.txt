@@ -4,3 +4,6 @@ flake8
 isort
 mypy
 tox
+types-python-dateutil
+types-pytz
+types-requests
