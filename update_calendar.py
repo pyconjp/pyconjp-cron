@@ -21,8 +21,8 @@ import requests
 from dateutil import parser
 from pytz import timezone
 
-from settings import CONNPASS_API_KEY
 from google_api import get_calendar_service
+from settings import CONNPASS_API_KEY
 
 # 以下のタイトルを含むイベントは登録対象から外す
 NG_WORDS = ("懇親会", "spicy-food部", "Meat")
