@@ -5,7 +5,7 @@
 ```sh
 $ git clone git@github.com:pyconjp/pyconjp-cron.git
 $ cd pyconjp-cron
-$ python3.6 -m venv env
+$ python3.11 -m venv env
 $ . env/bin/activate
 (env) $ pip install -r requirements.txt
 (env) # 「1. Google API を有効にする」の手順を実施
