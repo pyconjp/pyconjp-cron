@@ -156,7 +156,6 @@ def main() -> None:
         "From": "https://github.com/pyconjp/pyconjp-cron",
         "X-API-Key": CONNPASS_API_KEY,
     }
-    breakpoint()
 
     r = requests.get(
         "https://connpass.com/api/v2/events/", params=params, headers=headers
