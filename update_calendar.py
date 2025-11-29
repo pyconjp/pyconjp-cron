@@ -21,6 +21,7 @@ import requests
 from dateutil import parser
 from pytz import timezone
 
+from settings import CONNPASS_API_KEY
 from google_api import get_calendar_service
 
 # 以下のタイトルを含むイベントは登録対象から外す
@@ -153,8 +154,9 @@ def main() -> None:
     headers = {
         "User-Agent": "PyCon JP cron",
         "From": "https://github.com/pyconjp/pyconjp-cron",
-        "X-API-Key": "API-KEY",  # TODO: API-KEYを取得
+        "X-API-Key": CONNPASS_API_KEY,
     }
+    breakpoint()
 
     r = requests.get(
         "https://connpass.com/api/v2/events/", params=params, headers=headers

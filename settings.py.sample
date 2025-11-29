@@ -14,3 +14,6 @@ FB_PAGE_ACCESS_TOKEN = 'xxxxxxxxxxxxxxxxxxxxx'
 # Slack API token
 # https://api.slack.com/custom-integrations/legacy-tokens
 SLACK_TOKEN = 'xoxp-xxxxxxxxxxxxxxx'
+
+# Connpass API Key
+CONNPASS_API_KEY = "xxxxxxxxxxxxxxxxxxxxxxx"
