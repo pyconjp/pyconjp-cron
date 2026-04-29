@@ -99,7 +99,7 @@ def create_calendar_event_body(event: dict[str, str]) -> dict[str, Any]:
 
     body = {
         "summary": event["title"],
-        "description": '<a href="{0}">{0}</a>'.format(event["event_url"]),
+        "description": '<a href="{0}">{0}</a>'.format(event["url"]),
         "start": {
             "dateTime": event["started_at"],
             "timeZone": "Asia/Tokyo",
@@ -128,7 +128,7 @@ def register_event_to_calendar(event: dict[str, str]) -> None:
     calendar = get_calendar_service()
 
     # 同一connpassイベントがカレンダーに登録済か調べる
-    event_id = get_calendar_event_id(calendar, event["event_url"])
+    event_id = get_calendar_event_id(calendar, event["url"])
 
     # カレンダーに登録するためのイベント情報を作成する
     body = create_calendar_event_body(event)
